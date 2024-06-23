@@ -24,26 +24,24 @@ Faça um fork e realize commits ao longo do processo para que possamos entender 
 
 ### Introdução
 
-O primeiro passo paara o desenvolvimento desta aplicação foi aplicar um manifesto Terraform para provisionar um ambiente de testes na AWS. Este manifesto não faz parte deste documento. 
+O primeiro passo para o desenvolvimento desta aplicação foi aplicar um manifesto Terraform para provisionar um ambiente de testes na AWS. Este manifesto não faz parte deste documento. 
 
 A ordem de apresentação deste documento segue conforme o projeto foi desenvolvido
 
 - Ubuntu teste
-- Mysql com banco NodeDB
-- Nodejs App e Nginx Proxy
-- Anexo
+- Mysql com banco de dados NodeDB
+- Nodejs App e Ngnix Proxy
+- Validações
 
-
-Os arquivos acrescentados ao projeto estão destacados
-
+Estrutura de diretórios do projeto
 
 ├── docker-compose.yaml  
 ├── mysql  
-│   ├── init.sql  
-│   ├── mysql.yaml    
-│   └── Dockerfile     
-├── nginx   
-│   └── nginx.yaml    
+│   ├── init.sql    
+│   ├── mysql.yaml   
+│   └── Dockerfile   
+├── ngnix   
+│   └── ngnix.yaml    
 ├── node  
 │   ├── Dockerfile     
 │   ├── connectionDb.js  
@@ -56,7 +54,7 @@ Os arquivos acrescentados ao projeto estão destacados
 
 ## Ubuntu teste
 
-Foi reaizado o deployment de um pod ubuntu para validar cada camada desta aplicação. Manifesto do deployment no anexo `ubuntu.yaml`
+Foi realizado o deployment de um pod ubuntu para validar cada camada desta aplicação. Manifesto do deployment no anexo `ubuntu.yaml`
  
 
 ---
@@ -72,23 +70,23 @@ MySQL com NodeDB contendo os seguintes Itens
 - Deployment
 - Service
 
-Visando a configuração do banco de dados a imagem selecionada para o deployment do pod foi preconfigurada via dockerfile. Outra opção seria uma configuração de DB via  `configmap` , foi realizada esta configuração, porém sem sucesso - quando adicionado outro volumemount para persistencia do banco, não ocorria a configuraçao definidada no `configmap` - as hipoteses para este comportamento não foram investigadas e optou-se por seguir outra estratégia.
+Visando a configuração do banco de dados a imagem selecionada para o deployment do pod foi preconfigurada via dockerfile. Outra opção seria uma configuração de DB via  `configmap` , foi realizada esta configuração, porém sem sucesso - quando adicionado outro volume mount para persistencia do banco de dados, não ocorria a configuração definida no `configmap` - as hipoteses para este comportamento não foram investigadas e optou-se por seguir outra estratégia.
 
-`secrets` para não expor senhas de acesso ao banco, `persistent volume`  e `persistent volume clain` visando a persistencia de dados. `deployment`  e `service` para executar e expor o banco de dados dentro do cluster. 
+`secrets` para não expor senhas de acesso ao DB, `persistent volume`  e `persistent volume claim` visando a persistencia de dados. `deployment`  e `service` para executar e expor o banco de dados dentro do cluster. 
 
-Todos os arquivos desta etapa, `Dockerfle` e `mysql.yaml` estão em `/desafio-devops/mysql/`. Foi realizada a construção e upload da imagem docker para o repostório DockerHub, em seguida aplicou-se o `mysql.yaml`.
-
-
----
-
-
-
-
+Todos os arquivos desta etapa, `Dockerfle` e `mysql.yaml` estão em `/desafio-devops/mysql/`. Foi realizada a construção e upload da imagem docker para o repositório DockerHub, em seguida aplicou-se o `mysql.yaml`.
 
 
 ---
 
-### NodeJS App e Nginx Proxy
+
+
+
+
+
+---
+
+### NodeJS App e Ngnix Proxy
 
 NodeJS contendo os seguintes itens K8s
 
@@ -121,14 +119,14 @@ Error: ER_NO_SUCH_TABLE: Table 'nodedb.peoples' doesn't exist
     at Query.Sequence._packetToError 
 ```
 
-Neste momento, voltamos a primeira etapa - construçao do banco de dados - e toda a declaração do MySQL foi revisada para corrigir o nome do banco e fazer novo deploy.
+Neste momento, voltamos a primeira etapa - construção do banco de dados - e toda a declaração do MySQL foi revisada para corrigir o nome do DB e fazer novo deploy.
 
 DE:       node_bd  
 PARA:     nodedb  
 
 ---
 
-Após redefinir o nome do DB na construção da imagem. Realizamos outro deploy. A seguir, está demonstrada a execução do manifesto NodeJS e analise de logs da aplicação. 
+Após redefinir o nome do DB na construção da imagem docker. Realizamos outro deploy. A seguir, está demonstrada a execução do manifesto Kubernetes NodeJS e análise de logs da aplicação. 
 
 ```yaml
 root@kubectl:/home/ubuntu/desafio-devops/node# kubectl apply -f node15.yaml
@@ -173,9 +171,9 @@ curl: (7) Failed to connect to 172.20.58.250 port 3000: Connection refused
 
 Como podemos observar na analise - funciona localmente mas não funciona via rede dentro do cluster.
 
-Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamento. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em `/desafio-devops/node/`.
+Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testadas com o mesmo comportamento. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em `/desafio-devops/node/`.
 
-Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Nginx Proxy
+Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Ngnix Proxy
 
 ---
 
@@ -185,7 +183,7 @@ Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Nginx Proxy
 root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://node-app-service:3000/
 <h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>
 
-root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://nginx-proxy-service/
+root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://ngnix-proxy-service/
 <h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>César Reis<br>
 
 root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://afa0d3b85788d41b48a51e145c243edc-1599917297.us-east-2.elb.amazonaws.com/
