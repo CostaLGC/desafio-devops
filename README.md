@@ -15,5 +15,45 @@ Se não entender algum conceito ou parte do problema, não é motivo para se pre
  - um README contendo os seus pensamentos ao longo do projeto para identificação e correção dos erros
 
 Faça um fork e realize commits ao longo do processo para que possamos entender o seu modo de pensar! :)
+
+
+
+
+
+### Introdução
+
+O primeiro passo paara o desenvolvimento desta aplicação foi aplicar um manifesto Terraform para provisionar um ambiente de testes na AWS. Este manifesto não faz parte deste documento. 
+
+A ordem de apresentação deste documento segue conforme o projeto foi desenvolvido
+
+- Ubuntu teste
+- Mysql com banco NodeDB
+- Nodejs App e Nginx Proxy
+- Anexo
+
+
+Os arquivos acrescentados ao projeto estão destacados
+
+
+├── docker-compose.yaml
+├── mysql
+│   ├── init.sql
+│   ├── mysql.yaml  
+│   └── Dockerfile   
+├── nginx
+│   └── nginx.yaml  
+├── node
+│   ├── Dockerfile   
+│   ├── connectionDb.js
+│   ├── index.js
+│   ├── node.yaml   
+│   ├── package.json
+│   └── routes.js
+└── ubuntu.yaml
+
+
+## Ubuntu teste
+
+Foi reaizado o deployment de um pod ubuntu para validar cada camada desta aplicação. Manifesto do deployment no anexo `ubuntu.yaml`
  
   
