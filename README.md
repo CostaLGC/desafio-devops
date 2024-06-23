@@ -18,7 +18,7 @@ Faça um fork e realize commits ao longo do processo para que possamos entender 
 
 
 
-
+##
 
 ### Introdução
 
@@ -56,4 +56,25 @@ Os arquivos acrescentados ao projeto estão destacados
 
 Foi reaizado o deployment de um pod ubuntu para validar cada camada desta aplicação. Manifesto do deployment no anexo `ubuntu.yaml`
  
-  
+
+---
+
+## MySQL
+
+MySQL com NodeDB contendo os seguintes Itens
+
+- Dockerfile
+- Secrets
+- Persisten Volumes
+- PersistentVolumeClaim
+- Deployment
+- Service
+
+Visando a configuração do banco de dados a imagem selecionada para o deployment do pod foi preconfigurada via dockerfile. Outra opção seria uma configuração de DB via  `configmap` , foi realizada esta configuração, porém sem sucesso - quando adicionado outro volumemount para persistencia do banco, não ocorria a configuraçao definidada no `configmap` - as hipoteses para este comportamento não foram investigadas e optou-se por seguir outra estratégia.
+
+`secrets` para não expor senhas de acesso ao banco, `persistent volume`  e `persistent volume clain` visando a persistencia de dados. `deployment`  e `service` para executar e expor o banco de dados dentro do cluster. 
+
+Todos os arquivos desta etapa estão em /desafio-devops/mysql/
+
+
+---
