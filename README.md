@@ -88,13 +88,15 @@ Todos os arquivos desta etapa, `Dockerfle` e `mysql.yaml` estão em `/desafio-de
 
 ### NodeJS App e Nginx Proxy
 
-NodeJS contendo os seguintes Itens
+NodeJS contendo os seguintes itens K8s
 
 - Dockerfile
 - Deployment
 - Service
 
-Para o desenvolvimento desta etapa foram utilizados os arquivos da aplicação fornecidos juntamente com o Dockefile. No Dockerfile, foram ajustados alguns comandos como
+Para o desenvolvimento desta etapa foram utilizados os arquivos da aplicação fornecidos juntamente com o `Dockefile` modifica e `node.yaml` no diretório `/desafio-devops/node/`. 
+
+No Dockerfile, foram ajustados alguns comandos como
 
 ```yaml
 RUN npm install
@@ -119,8 +121,8 @@ Error: ER_NO_SUCH_TABLE: Table 'nodedb.peoples' doesn't exist
 
 Neste momento, voltamos a primeira etapa - construçao do banco de dados - e toda a declaração do MySQL foi revisada para corrigir o nome do banco e fazer novo deploy.
 
-DE:         node_bd
-PARA:     nodedb
+DE:       node_bd  
+PARA:     nodedb  
 
 ---
 
@@ -169,7 +171,7 @@ curl: (7) Failed to connect to 172.20.58.250 port 3000: Connection refused
 
 Como podemos observar na analise - funciona localmente mas não funciona via rede dentro do cluster.
 
-Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamente. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em anexo.
+Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamente. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em `/desafio-devops/node/`.
 
 Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Nginx Proxy
 
