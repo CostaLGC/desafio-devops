@@ -171,7 +171,7 @@ curl: (7) Failed to connect to 172.20.58.250 port 3000: Connection refused
 
 Como podemos observar na analise - funciona localmente mas não funciona via rede dentro do cluster.
 
-Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamente. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em `/desafio-devops/node/`.
+Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamento. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em `/desafio-devops/node/`.
 
 Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Nginx Proxy
 
