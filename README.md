@@ -35,21 +35,21 @@ A ordem de apresentação deste documento segue conforme o projeto foi desenvolv
 Os arquivos acrescentados ao projeto estão destacados
 
 
-├── docker-compose.yaml
-├── mysql
-│   ├── init.sql
-│   ├── mysql.yaml  
-│   └── Dockerfile   
-├── nginx
-│   └── nginx.yaml  
-├── node
-│   ├── Dockerfile   
-│   ├── connectionDb.js
-│   ├── index.js
-│   ├── node.yaml   
-│   ├── package.json
-│   └── routes.js
-└── ubuntu.yaml
+├── docker-compose.yaml  
+├── mysql  
+│   ├── init.sql  
+│   ├── mysql.yaml    
+│   └── Dockerfile     
+├── nginx   
+│   └── nginx.yaml    
+├── node  
+│   ├── Dockerfile     
+│   ├── connectionDb.js  
+│   ├── index.js  
+│   ├── node.yaml     
+│   ├── package.json  
+│   └── routes.js  
+└── ubuntu.yaml  
 
 
 ## Ubuntu teste
