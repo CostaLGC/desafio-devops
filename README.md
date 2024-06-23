@@ -188,7 +188,6 @@ root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://afa0d3b85788d41b48a51e145c
 <h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>César Reis<br>Enzo Costa<br>root@ubuntu-deployment-d4597d687-xvwqp:/#
 ```
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/a592af5b-4040-4414-a59d-64286800fcd3/cbf2ed2c-6f64-49e4-9a42-0b38f2ed7ee8/Untitled.png)
 
 ![Untitled](/nodejs-app-validação.png)
 
