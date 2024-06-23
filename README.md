@@ -74,7 +74,7 @@ Visando a configuração do banco de dados a imagem selecionada para o deploymen
 
 `secrets` para não expor senhas de acesso ao banco, `persistent volume`  e `persistent volume clain` visando a persistencia de dados. `deployment`  e `service` para executar e expor o banco de dados dentro do cluster. 
 
-Todos os arquivos desta etapa estão em /desafio-devops/mysql/
+Todos os arquivos desta etapa, `Dockerfle` e `mysql.yaml` estão em `/desafio-devops/mysql/`. Foi realizada a construção e upload da imagem docker para o repostório DockerHub, em seguida aplicou-se o `mysql.yaml`.
 
 
 ---
