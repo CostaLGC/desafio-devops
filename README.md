@@ -78,3 +78,116 @@ Todos os arquivos desta etapa, `Dockerfle` e `mysql.yaml` estão em `/desafio-de
 
 
 ---
+
+
+
+
+
+
+---
+
+### NodeJS App e Nginx Proxy
+
+NodeJS contendo os seguintes Itens
+
+- Dockerfile
+- Deployment
+- Service
+
+Para o desenvolvimento desta etapa foram utilizados os arquivos da aplicação fornecidos juntamente com o Dockefile. No Dockerfile, foram ajustados alguns comandos como
+
+```yaml
+RUN npm install
+CMD ["node", "index.js"]
+```
+
+Com o Dockerfile pronto, foi realizado o empacotamento da aplicação via `build` e `push` , gerando uma imagem específica no repositório Docker Hub. 
+
+Dando seguimento, foram construidos os manifestos Kubernetes para o NodeJS App, contendo `deployment` e `service` . 
+
+A aplicaçao rodou por alguns segundos e apresentou erro - havia uma diferença na declaração do nome do banco de dados. A seguir está a evidência:
+
+```yaml
+Rodando na porta 3000
+/node_modules/mysql/lib/protocol/Parser.js:437
+      throw err; // Rethrow non-MySQL errors
+      ^
+
+Error: ER_NO_SUCH_TABLE: Table 'nodedb.peoples' doesn't exist
+    at Query.Sequence._packetToError 
+```
+
+Neste momento, voltamos a primeira etapa - construçao do banco de dados - e toda a declaração do MySQL foi revisada para corrigir o nome do banco e fazer novo deploy.
+
+DE:         node_bd
+PARA:     nodedb
+
+---
+
+Após redefinir o nome do DB na construção da imagem. Realizamos outro deploy. A seguir, está demonstrada a execução do manifesto NodeJS e analise de logs da aplicação. 
+
+```yaml
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl apply -f node15.yaml
+deployment.apps/app-node created
+service/nodejs-service created
+```
+
+```yaml
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+app-node   2/2     2            2           31s
+mysql      1/1     1            1           10m
+
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl get services
+NAME             TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+db               ClusterIP   172.20.218.185   <none>        3306/TCP   13m
+kubernetes       ClusterIP   172.20.0.1       <none>        443/TCP    128m
+nodejs-service   ClusterIP   172.20.58.250    <none>        3000/TCP   4m12s
+
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl get pods
+NAME                        READY   STATUS    RESTARTS   AGE
+app-node-5f79fdd889-gztqf   1/1     Running   0          45s
+app-node-5f79fdd889-mhvwc   1/1     Running   0          45s
+mysql-d776f956b-cscgz       1/1     Running   0          10m
+
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl logs app-node-5f79fdd889-gztqf
+Rodando na porta 3000
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl logs app-node-5f79fdd889-mhvwc
+Rodando na porta 3000
+
+root@kubectl:/home/ubuntu/desafio-devops/node# kubectl exec -it app-node-5f79fdd889-gztqf -- /bin/bash
+root@app-node-5f79fdd889-gztqf:/usr/src/app# apt install curl
+
+root@app-node-5f79fdd889-gztqf:/usr/src/app# curl http://127.0.0.1:3000/
+<h1>Desafio Devops!</h1>Enzo Moreira<br>root@app-node-5f79fdd889-gztqf:/usr/src/app#
+
+root@app-node-5f79fdd889-gztqf:/usr/src/app# curl http://nodejs-service:3000/
+curl: (7) Failed to connect to nodejs-service port 3000: Connection refused
+root@app-node-5f79fdd889-gztqf:/usr/src/app# curl http://172.20.58.250:3000/
+curl: (7) Failed to connect to 172.20.58.250 port 3000: Connection refused
+```
+
+Como podemos observar na analise - funciona localmente mas não funciona via rede dentro do cluster.
+
+Para a resolução deste problema, optou-se por empacotar a aplicação em outras imagens, sendo elas o node 14 e 16 testados com o mesmo comportamente. Em seguida uma imagem Alpine foi utilizada para empacotar a aplicação e funcionou. O dockerfile está em anexo.
+
+Por fim, foi realizado o desenvolvimento do manifesto kubernetes p/ Nginx Proxy
+
+---
+
+### Validação
+
+```yaml
+root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://node-app-service:3000/
+<h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>
+
+root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://nginx-proxy-service/
+<h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>César Reis<br>
+
+root@ubuntu-deployment-d4597d687-xvwqp:/# curl http://afa0d3b85788d41b48a51e145c243edc-1599917297.us-east-2.elb.amazonaws.com/
+<h1>Desafio Devops!</h1>Frederico Silva<br>Carlos Silva<br>César Reis<br>Enzo Costa<br>root@ubuntu-deployment-d4597d687-xvwqp:/#
+```
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/a592af5b-4040-4414-a59d-64286800fcd3/cbf2ed2c-6f64-49e4-9a42-0b38f2ed7ee8/Untitled.png)
+
+---
