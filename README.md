@@ -1,6 +1,6 @@
 # Desafio Devops
 
-O projeto contém uma aplicação básica com Node, Ngnix e MySQL. 
+O projeto contém uma aplicação básica com Node, Nginx e MySQL. 
 
 A cada atualização da página, um novo registro será cadastrado no banco de dados e será mostrado na listagem, na mesma página.  
 
